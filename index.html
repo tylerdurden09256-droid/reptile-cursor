@@ -1,19 +1,196 @@
-<!DOCTYPE html>
-
-chtal Lang-"en">
-
-<head>
-
-creta charset="UTF-8">
-
-conta name="viewport" content="width=device-width, initial-scale-1.0">
-
-<title>Reptile Interactive Cursor title>
-
-hear <body>
-
-<script src="./script.js"></script>
-
-<body>
-
-<html>
+      0.5,
+      0.085,
+      0.5,
+      0.3
+    );
+    var node = critter;
+    //(parent,size,angle,range,stiffness)
+    for (var i = 0; i < 128; i++) {
+      var node = new Segment(node, 8, 0, 3.14159 / 2, 1);
+    }
+    setInterval(function() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      critter.follow(Input.mouse.x, Input.mouse.y);
+    }, 33);
+  }
+  function setupTentacle() {
+    //(x,y,angle,fAccel,fFric,fRes,fThresh,rAccel,rFric,rRes,rThresh)
+    critter = new Creature(
+      window.innerWidth / 2,
+      window.innerHeight / 2,
+      0,
+      12,
+      1,
+      0.5,
+      16,
+      0.5,
+      0.085,
+      0.5,
+      0.3
+    );
+    var node = critter;
+    //(parent,size,angle,range,stiffness)
+    for (var i = 0; i < 32; i++) {
+      var node = new Segment(node, 8, 0, 2, 1);
+    }
+    //(end,length,speed,creature)
+    var tentacle = new LimbSystem(node, 32, 8, critter);
+    setInterval(function() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      critter.follow(canvas.width / 2, canvas.height / 2);
+      ctx.beginPath();
+      ctx.arc(Input.mouse.x, Input.mouse.y, 2, 0, 6.283);
+      ctx.fill();
+    }, 33);
+  }
+  function setupArm() {
+    //(x,y,angle,fAccel,fFric,fRes,fThresh,rAccel,rFric,rRes,rThresh)
+    var critter = new Creature(
+      window.innerWidth / 2,
+      window.innerHeight / 2,
+      0,
+      12,
+      1,
+      0.5,
+      16,
+      0.5,
+      0.085,
+      0.5,
+      0.3
+    );
+    var node = critter;
+    //(parent,size,angle,range,stiffness)
+    for (var i = 0; i < 3; i++) {
+      var node = new Segment(node, 80, 0, 3.1416, 1);
+    }
+    var tentacle = new LimbSystem(node, 3, critter);
+    setInterval(function() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      critter.follow(canvas.width / 2, canvas.height / 2);
+    }, 33);
+    ctx.beginPath();
+    ctx.arc(Input.mouse.x, Input.mouse.y, 2, 0, 6.283);
+    ctx.fill();
+  }
+  
+  function setupTestSquid(size, legs) {
+    //(x,y,angle,fAccel,fFric,fRes,fThresh,rAccel,rFric,rRes,rThresh)
+    critter = new Creature(
+      window.innerWidth / 2,
+      window.innerHeight / 2,
+      0,
+      size * 10,
+      size * 3,
+      0.5,
+      16,
+      0.5,
+      0.085,
+      0.5,
+      0.3
+    );
+    var legNum = legs;
+    var jointNum = 32;
+    for (var i = 0; i < legNum; i++) {
+      var node = critter;
+      var ang = Math.PI / 2 * (i / (legNum - 1) - 0.5);
+      for (var ii = 0; ii < jointNum; ii++) {
+        var node = new Segment(
+          node,
+          size * 64 / jointNum,
+          ang * (ii == 0),
+          3.1416,
+          1.2
+        );
+      }
+      //(end,length,speed,creature,dist)
+      var leg = new LegSystem(node, jointNum, size * 30, critter);
+    }
+    setInterval(function() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      critter.follow(Input.mouse.x, Input.mouse.y);
+    }, 33);
+  }
+  function setupLizard(size, legs, tail) {
+    var s = size;
+    //(x,y,angle,fAccel,fFric,fRes,fThresh,rAccel,rFric,rRes,rThresh)
+    critter = new Creature(
+      window.innerWidth / 2,
+      window.innerHeight / 2,
+      0,
+      s * 10,
+      s * 2,
+      0.5,
+      16,
+      0.5,
+      0.085,
+      0.5,
+      0.3
+    );
+    var spinal = critter;
+    //(parent,size,angle,range,stiffness)
+    //Neck
+    for (var i = 0; i < 6; i++) {
+      spinal = new Segment(spinal, s * 4, 0, 3.1415 * 2 / 3, 1.1);
+      for (var ii = -1; ii <= 1; ii += 2) {
+        var node = new Segment(spinal, s * 3, ii, 0.1, 2);
+        for (var iii = 0; iii < 3; iii++) {
+          node = new Segment(node, s * 0.1, -ii * 0.1, 0.1, 2);
+        }
+      }
+    }
+    //Torso and legs
+    for (var i = 0; i < legs; i++) {
+      if (i > 0) {
+        //Vertebrae and ribs
+        for (var ii = 0; ii < 6; ii++) {
+          spinal = new Segment(spinal, s * 4, 0, 1.571, 1.5);
+          for (var iii = -1; iii <= 1; iii += 2) {
+            var node = new Segment(spinal, s * 3, iii * 1.571, 0.1, 1.5);
+            for (var iv = 0; iv < 3; iv++) {
+              node = new Segment(node, s * 3, -iii * 0.3, 0.1, 2);
+            }
+          }
+        }
+      }
+      //Legs and shoulders
+      for (var ii = -1; ii <= 1; ii += 2) {
+        var node = new Segment(spinal, s * 12, ii * 0.785, 0, 8); //Hip
+        node = new Segment(node, s * 16, -ii * 0.785, 6.28, 1); //Humerus
+        node = new Segment(node, s * 16, ii * 1.571, 3.1415, 2); //Forearm
+        for (
+          var iii = 0;
+          iii < 4;
+          iii++ //fingers
+        ) {
+          new Segment(node, s * 4, (iii / 3 - 0.5) * 1.571, 0.1, 4);
+        }
+        new LegSystem(node, 3, s * 12, critter, 4);
+      }
+    }
+    //Tail
+    for (var i = 0; i < tail; i++) {
+      spinal = new Segment(spinal, s * 4, 0, 3.1415 * 2 / 3, 1.1);
+      for (var ii = -1; ii <= 1; ii += 2) {
+        var node = new Segment(spinal, s * 3, ii, 0.1, 2);
+        for (var iii = 0; iii < 3; iii++) {
+          node = new Segment(node, s * 3 * (tail - i) / tail, -ii * 0.1, 0.1, 2);
+        }
+      }
+    }
+    setInterval(function() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      critter.follow(Input.mouse.x, Input.mouse.y);
+    }, 33);
+  }
+  canvas.style.backgroundColor = "black";
+  ctx.strokeStyle = "white";
+  //setupSimple();//Just the very basic string
+  //setupTentacle();//Tentacle that reaches for mouse
+  //setupLizard(.5,100,128);//Literal centipede
+  //setupSquid(2,8);//Spidery thing
+  var legNum = Math.floor(1 + Math.random() * 12);
+  setupLizard(
+    8 / Math.sqrt(legNum),
+    legNum,
+    Math.floor(4 + Math.random() * legNum * 8)
+  );
