@@ -1,117 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Real Snake Cursor</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #111;
-            cursor: none;
-        }
+<title>Dragon Cursor</title>
+<style>
+body{
+  margin:0;
+  background:#0b0f1a;
+  cursor:none;
+  overflow:hidden;
+}
 
-        .segment {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background: radial-gradient(circle at 30% 30%, #2ecc71, #145a32);
-            border-radius: 50%;
-            pointer-events: none;
-        }
+/* Dragon head */
+.dragon{
+  position:absolute;
+  width:70px;
+  height:70px;
+  pointer-events:none;
+  transform-origin:center;
+  filter: drop-shadow(0 0 15px orange);
+}
 
-        .head {
-            width: 22px;
-            height: 22px;
-            background: radial-gradient(circle at 40% 40%, #27ae60, #0b3d1e);
-            border-radius: 50%;
-        }
-
-        .eye {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: black;
-            border-radius: 50%;
-            top: 6px;
-        }
-
-        .eye.left { left: 5px; }
-        .eye.right { right: 5px; }
-
-        .tongue {
-            position: absolute;
-            width: 2px;
-            height: 10px;
-            background: red;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: flick 0.6s infinite alternate;
-        }
-
-        @keyframes flick {
-            from { height: 6px; }
-            to { height: 14px; }
-        }
-    </style>
+/* Fire trail */
+.fire{
+  position:absolute;
+  width:12px;
+  height:12px;
+  background: radial-gradient(circle, orange, red, transparent);
+  border-radius:50%;
+  pointer-events:none;
+  opacity:0.8;
+}
+</style>
 </head>
 <body>
 
+<!-- Dragon Head SVG -->
+<svg class="dragon" viewBox="0 0 100 100">
+  <path d="M20 50 Q40 10 80 30 Q70 50 90 70 Q60 60 40 80 Q30 60 20 50"
+        fill="#1f2937"/>
+  <polygon points="60,35 70,20 75,40" fill="orange"/>
+  <circle cx="55" cy="45" r="5" fill="red"/>
+</svg>
+
 <script>
-    const segments = [];
-    const segmentCount = 25;
+const dragon = document.querySelector(".dragon");
 
-    for (let i = 0; i < segmentCount; i++) {
-        const div = document.createElement("div");
-        div.classList.add("segment");
-        document.body.appendChild(div);
-        segments.push({ element: div, x: 0, y: 0 });
-    }
+const trailCount = 25;
+const trail = [];
 
-    // Make head
-    segments[0].element.classList.add("head");
+for(let i=0;i<trailCount;i++){
+  const dot = document.createElement("div");
+  dot.classList.add("fire");
+  document.body.appendChild(dot);
+  trail.push({el:dot,x:0,y:0});
+}
 
-    const eyeLeft = document.createElement("div");
-    eyeLeft.classList.add("eye", "left");
+let mouseX=0, mouseY=0;
 
-    const eyeRight = document.createElement("div");
-    eyeRight.classList.add("eye", "right");
+document.addEventListener("mousemove",e=>{
+  mouseX=e.clientX;
+  mouseY=e.clientY;
+});
 
-    const tongue = document.createElement("div");
-    tongue.classList.add("tongue");
+function animate(){
+  let dx = mouseX - trail[0].x;
+  let dy = mouseY - trail[0].y;
+  let angle = Math.atan2(dy,dx)*180/Math.PI;
 
-    segments[0].element.appendChild(eyeLeft);
-    segments[0].element.appendChild(eyeRight);
-    segments[0].element.appendChild(tongue);
+  dragon.style.left = mouseX - 35 + "px";
+  dragon.style.top = mouseY - 35 + "px";
+  dragon.style.transform = "rotate("+angle+"deg)";
 
-    let mouseX = 0;
-    let mouseY = 0;
+  let x = mouseX;
+  let y = mouseY;
 
-    document.addEventListener("mousemove", (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
+  trail.forEach((segment,i)=>{
+    segment.x += (x - segment.x)*0.3;
+    segment.y += (y - segment.y)*0.3;
 
-    function animate() {
-        let x = mouseX;
-        let y = mouseY;
+    segment.el.style.left = segment.x + "px";
+    segment.el.style.top = segment.y + "px";
+    segment.el.style.opacity = 1 - i/trailCount;
 
-        segments.forEach((segment) => {
-            segment.x += (x - segment.x) * 0.25;
-            segment.y += (y - segment.y) * 0.25;
+    x = segment.x;
+    y = segment.y;
+  });
 
-            segment.element.style.left = segment.x + "px";
-            segment.element.style.top = segment.y + "px";
+  requestAnimationFrame(animate);
+}
 
-            x = segment.x;
-            y = segment.y;
-        });
-
-        requestAnimationFrame(animate);
-    }
-
-    animate();
+animate();
 </script>
 
 </body>
-</html>
+</html>         
