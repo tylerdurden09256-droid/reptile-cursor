@@ -1,96 +1,19 @@
 <!DOCTYPE html>
-<html>
+
+chtal Lang-"en">
+
 <head>
-<title>Dragon Cursor</title>
-<style>
-body{
-  margin:0;
-  background:#0b0f1a;
-  cursor:none;
-  overflow:hidden;
-}
 
-/* Dragon head */
-.dragon{
-  position:absolute;
-  width:70px;
-  height:70px;
-  pointer-events:none;
-  transform-origin:center;
-  filter: drop-shadow(0 0 15px orange);
-}
+creta charset="UTF-8">
 
-/* Fire trail */
-.fire{
-  position:absolute;
-  width:12px;
-  height:12px;
-  background: radial-gradient(circle, orange, red, transparent);
-  border-radius:50%;
-  pointer-events:none;
-  opacity:0.8;
-}
-</style>
-</head>
+conta name="viewport" content="width=device-width, initial-scale-1.0">
+
+<title>Reptile Interactive Cursor title>
+
+hear <body>
+
+<script src="./script.js"></script>
+
 <body>
 
-<!-- Dragon Head SVG -->
-<svg class="dragon" viewBox="0 0 100 100">
-  <path d="M20 50 Q40 10 80 30 Q70 50 90 70 Q60 60 40 80 Q30 60 20 50"
-        fill="#1f2937"/>
-  <polygon points="60,35 70,20 75,40" fill="orange"/>
-  <circle cx="55" cy="45" r="5" fill="red"/>
-</svg>
-
-<script>
-const dragon = document.querySelector(".dragon");
-
-const trailCount = 25;
-const trail = [];
-
-for(let i=0;i<trailCount;i++){
-  const dot = document.createElement("div");
-  dot.classList.add("fire");
-  document.body.appendChild(dot);
-  trail.push({el:dot,x:0,y:0});
-}
-
-let mouseX=0, mouseY=0;
-
-document.addEventListener("mousemove",e=>{
-  mouseX=e.clientX;
-  mouseY=e.clientY;
-});
-
-function animate(){
-  let dx = mouseX - trail[0].x;
-  let dy = mouseY - trail[0].y;
-  let angle = Math.atan2(dy,dx)*180/Math.PI;
-
-  dragon.style.left = mouseX - 35 + "px";
-  dragon.style.top = mouseY - 35 + "px";
-  dragon.style.transform = "rotate("+angle+"deg)";
-
-  let x = mouseX;
-  let y = mouseY;
-
-  trail.forEach((segment,i)=>{
-    segment.x += (x - segment.x)*0.3;
-    segment.y += (y - segment.y)*0.3;
-
-    segment.el.style.left = segment.x + "px";
-    segment.el.style.top = segment.y + "px";
-    segment.el.style.opacity = 1 - i/trailCount;
-
-    x = segment.x;
-    y = segment.y;
-  });
-
-  requestAnimationFrame(animate);
-}
-
-animate();
-</script>
-
-</body>
-</html>         
+<html>
